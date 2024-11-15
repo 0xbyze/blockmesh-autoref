@@ -20,7 +20,7 @@ git clone https://github.com/0xbyze/blockmesh-autoref.git
 Navigate to the project directory and install the required dependencies using npm:
 
 ```bash
-cd blockmesh-autoreff
+cd blockmesh-autoref
 npm install
 ```
 
