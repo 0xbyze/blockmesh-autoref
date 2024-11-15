@@ -1,13 +1,13 @@
-const axios = require('axios');
 const { TempMail } = require("tempmail.lol");
 const fs = require('fs');
 const { faker } = require('@faker-js/faker');
 const { createInterface } = require('readline');
+const { ProxyAgent } = require('undici'); // Import ProxyAgent from undici
 const displayHeader = require('./src/displayHeader');
 
 displayHeader();
-// Setup API key and TempMail instance | https://tempmail.lol << register for apikey
-const API_KEY = 'API_KEY';
+// Setup API key and TempMail instance | https://tempmail.lol << register for apikey or leave it empty
+const API_KEY = '';
 const tempmail = new TempMail(API_KEY);
 const rl = createInterface({
     input: process.stdin,
@@ -49,19 +49,6 @@ async function createAndRegister(refcode) {
         let randPass = faker.internet.password();
         console.log(`Generated Password: ${randPass}`);
 
-        // Set up the Axios proxy config if proxies are available
-        const proxy = proxies.length > 0 ? getRandomProxy(proxies) : null;
-        const axiosInstance = axios.create({
-            proxy: proxy ? {
-                host: proxy.split('@')[1].split(':')[0],
-                port: parseInt(proxy.split(':')[2]),
-                auth: {
-                    username: proxy.split('@')[0].split(':')[1],
-                    password: proxy.split('@')[0].split(':')[2]
-                }
-            } : null
-        });
-
         // Step 3: Register on BlockMesh using the temporary email and generated password
         const registrationData = new URLSearchParams({
             email: inbox.address,
@@ -77,9 +64,20 @@ async function createAndRegister(refcode) {
             "Referer": `https://app.blockmesh.xyz/register?invite_code=${refcode}`,
         };
 
-        const response = await axiosInstance.post("https://app.blockmesh.xyz/register", registrationData, { headers });
-        console.log(`Registration response: ${response.status} ${response.statusText}`);
+        // Proxy setup: Create a ProxyAgent if proxies are available
+        const proxy = proxies.length > 0 ? getRandomProxy(proxies) : null;
+        const proxyAgent = proxy ? new ProxyAgent(proxy) : null;
+        console.log(`Using proxy: ${proxy}`)
+        // Fetch request for registration with proxy if available
+        const response = await fetch("https://app.blockmesh.xyz/register", {
+            method: 'POST',
+            headers: headers,
+            body: registrationData,
+            dispatcher: proxyAgent // Apply proxy if available
+        });
 
+        console.log(`Registration response: ${response.status} ${response.statusText}`);
+        delay(1500)
         // Step 4: Check the inbox for the confirmation email (retry up to 10 times)
         const emails = await checkInboxWithRetry(inbox);
 
@@ -109,7 +107,7 @@ async function createAndRegister(refcode) {
                     console.log(`Extracted confirmation link: ${confirmationLink}`);
 
                     // Step 7: Confirm registration by visiting the real confirmation link
-                    await axiosInstance.get(confirmationLink);
+                    await fetch(confirmationLink, { dispatcher: proxyAgent }); // Use proxy for confirmation link as well
                     console.log("Registration confirmed.");
 
                     // Step 8: Save email and password to accounts.txt

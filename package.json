@@ -1,5 +1,5 @@
 {
-  "name": "blockmesh-autoreff",
+  "name": "blockmesh-autoref",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -8,12 +8,14 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "description": "",
   "dependencies": {
     "@faker-js/faker": "^9.2.0",
     "axios": "^1.7.7",
     "colors": "^1.4.0",
-    "tempmail.lol": "^4.1.0"
+    "https-proxy-agent": "^7.0.5",
+    "tempmail.lol": "^4.1.0",
+    "undici": "^6.21.0"
   }
 }
