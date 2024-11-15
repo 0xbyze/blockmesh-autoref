@@ -14,7 +14,7 @@ Link register : **https://app.blockmesh.xyz/register?invite_code=eb52a9f5-9e0c-4
 First, clone this repository to your local machine:
 
 ```bash
-git clone https://github.com/0xbyze/blockmesh-autoreff.git
+git clone https://github.com/0xbyze/blockmesh-autoref.git
 ```
 ### 2. Install Dependencies
 Navigate to the project directory and install the required dependencies using npm:
