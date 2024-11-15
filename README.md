@@ -24,7 +24,11 @@ cd blockmesh-autoref
 npm install
 ```
 
-### 3. Run the Script
+### 3. Change APIKEY
+Edit index.js line 10 and input your apikey from tempmail.lol
+
+
+### 4. Run the Script
 Run the script with Node.js:
 
 ```bash
